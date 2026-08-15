@@ -544,3 +544,184 @@ input, select, textarea { border-radius: var(--af-control-radius); }
 @media (max-width: 767px) {
   main { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
 }
+
+/* AleemFin iOS Visual System v1 — shared language across every tab. */
+:root {
+  --af-blue: #007AFF;
+  --af-green: #34C759;
+  --af-red: #FF3B30;
+  --af-orange: #FF9500;
+  --af-purple: #AF52DE;
+  --af-teal: #5AC8FA;
+  --af-gray: #8E8E93;
+  --af-label: #1C1C1E;
+  --af-secondary: #6E6E73;
+  --af-tertiary: #8E8E93;
+  --af-bg: #F2F2F7;
+  --af-surface: rgba(255,255,255,.88);
+  --af-surface-solid: #FFFFFF;
+  --af-separator: rgba(60,60,67,.14);
+  --af-control-bg: rgba(118,118,128,.12);
+  --af-control-bg-hover: rgba(118,118,128,.18);
+  --af-radius: 16px;
+  --af-radius-small: 12px;
+  --af-shadow-soft: 0 8px 24px rgba(0,0,0,.055);
+}
+html.dark {
+  --af-label: #F5F5F7;
+  --af-secondary: #AEAEB2;
+  --af-tertiary: #8E8E93;
+  --af-bg: #000000;
+  --af-surface: rgba(28,28,30,.92);
+  --af-surface-solid: #1C1C1E;
+  --af-separator: rgba(84,84,88,.60);
+  --af-control-bg: rgba(118,118,128,.20);
+  --af-control-bg-hover: rgba(118,118,128,.28);
+  --af-shadow-soft: 0 10px 30px rgba(0,0,0,.24);
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif !important;
+  color: var(--af-label);
+  background: var(--af-bg);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+}
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/* Shared typography hierarchy. */
+main h1, main h2, main h3, main h4 { color: var(--af-label); }
+main h1 { font-size: 28px !important; line-height: 34px !important; font-weight: 700 !important; letter-spacing: -.02em !important; }
+main h2 { font-weight: 700 !important; letter-spacing: -.012em !important; }
+main h3 { font-weight: 600 !important; letter-spacing: -.008em !important; }
+main p, main span, main label, main li { letter-spacing: -.002em; }
+main .text-xs { font-size: 12px !important; line-height: 16px !important; }
+main .text-sm { font-size: 14px !important; line-height: 20px !important; }
+main .font-medium { font-weight: 500 !important; }
+main .font-semibold { font-weight: 600 !important; }
+main .font-bold { font-weight: 700 !important; }
+
+/* Shared surfaces/cards: one radius, one separator language. */
+main .rounded-2xl.border, main .rounded-3xl.border,
+main .home-panel, main .home-actions-section, main .home-stat {
+  border-color: var(--af-separator) !important;
+  box-shadow: var(--af-shadow-soft);
+}
+main .rounded-2xl, main .rounded-3xl { border-radius: var(--af-radius) !important; }
+
+/* Primary/secondary action language. */
+main button[class*="bg-emerald"], main button[class*="bg-green"] {
+  background: var(--af-green) !important;
+  color: #fff !important;
+}
+main button[class*="bg-red"], main button[class*="bg-rose"] {
+  background: var(--af-red) !important;
+  color: #fff !important;
+}
+main button[class*="bg-blue"] { background: var(--af-blue) !important; color:#fff !important; }
+main button[class*="bg-purple"], main button[class*="bg-violet"] { background: var(--af-purple) !important; color:#fff !important; }
+
+/* Secondary controls use the same system-wide gray tint. */
+.icon-select, .loan-text-action, .loan-icon-action, .home-rate-button,
+button.border, button[class*="bg-gray"], button[class*="bg-zinc"] {
+  border-color: var(--af-separator) !important;
+  border-radius: var(--af-radius-small) !important;
+}
+.icon-select, .home-rate-button, button.border {
+  background: var(--af-control-bg) !important;
+  color: var(--af-label) !important;
+}
+.icon-select:hover, .home-rate-button:hover, button.border:hover { background: var(--af-control-bg-hover) !important; }
+
+/* Consistent icon sizing and stroke weight. */
+main button svg, main a svg, .icon-select svg, .home-action svg {
+  width: 19px !important; height: 19px !important; stroke-width: 2 !important;
+}
+main button .w-3, main button .w-3\.5 { width:17px !important; height:17px !important; }
+main button .w-4 { width:19px !important; height:19px !important; }
+
+/* Search/filter/sort controls share the same compact capsule. */
+.icon-select {
+  min-width: 44px !important; min-height: 44px !important;
+  padding: 0 11px !important; display:inline-flex !important;
+  align-items:center; justify-content:center; gap:6px;
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+}
+.icon-select select { min-width: 0; background: transparent; }
+
+/* Shared action rows/cards. */
+.home-action, .loan-text-action, .loan-icon-action {
+  box-shadow: none !important;
+  font-weight: 600 !important;
+}
+.home-action { border-color: var(--af-separator) !important; background: var(--af-surface) !important; color: var(--af-label) !important; }
+.home-action-icon { border-radius: 11px !important; }
+
+/* Loan actions use the same semantic palette as the rest of the app. */
+.loan-text-action-repay {
+  background: color-mix(in srgb, var(--af-green) 12%, transparent) !important;
+  color: #168044 !important; border-color: color-mix(in srgb, var(--af-green) 24%, transparent) !important;
+}
+.loan-text-action-add {
+  background: color-mix(in srgb, var(--af-blue) 12%, transparent) !important;
+  color: #1769aa !important; border-color: color-mix(in srgb, var(--af-blue) 24%, transparent) !important;
+}
+.loan-icon-action-history {
+  background: rgba(142,142,147,.13) !important;
+  color: var(--af-secondary) !important;
+  border-color: rgba(142,142,147,.18) !important;
+}
+html.dark .loan-text-action-repay { background: rgba(52,199,89,.16) !important; color:#7ee59a !important; border-color:rgba(52,199,89,.24) !important; }
+html.dark .loan-text-action-add { background: rgba(10,132,255,.16) !important; color:#80bfff !important; border-color:rgba(10,132,255,.24) !important; }
+html.dark .loan-icon-action-history { background: rgba(142,142,147,.18) !important; color:#c7c7cc !important; border-color:rgba(142,142,147,.25) !important; }
+
+/* Swipe actions: same semantic colors as native iOS destructive/edit affordances. */
+.swipe-action { min-width: 44px !important; min-height: 44px !important; border-radius: 13px !important; }
+.swipe-action-edit { background: rgba(0,122,255,.18) !important; color: #0066cc !important; }
+.swipe-action-delete { background: rgba(255,59,48,.18) !important; color: #d70015 !important; }
+html.dark .swipe-action-edit { background: rgba(10,132,255,.24) !important; color:#66b3ff !important; }
+html.dark .swipe-action-delete { background: rgba(255,69,58,.24) !important; color:#ff8a83 !important; }
+.swipe-action svg { width: 21px !important; height: 21px !important; stroke-width: 2 !important; }
+
+/* Financial semantic colors are consistent everywhere. */
+.account-flow-in, .text-emerald-500, .text-emerald-600 { color: var(--af-green) !important; }
+.account-flow-out, .text-rose-500, .text-rose-600 { color: var(--af-red) !important; }
+.text-blue-500, .text-blue-600 { color: var(--af-blue) !important; }
+.text-purple-500, .text-purple-600 { color: var(--af-purple) !important; }
+
+/* Navigation: same icon/text hierarchy on desktop and mobile. */
+header nav button, nav.fixed.bottom-0 button {
+  color: var(--af-secondary);
+  font-weight: 600 !important;
+}
+header nav button svg, nav.fixed.bottom-0 button svg { stroke-width: 2 !important; }
+nav.fixed.bottom-0 button { border-radius: 14px !important; }
+
+/* Dividers should feel like iOS separators, not card outlines. */
+main hr, main .border-b, main .border-t { border-color: var(--af-separator) !important; }
+
+/* Form controls: consistent typography and focus language. */
+input, select, textarea {
+  font-family: inherit !important;
+  color: var(--af-label) !important;
+  background: var(--af-surface-solid);
+  border-color: var(--af-separator) !important;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(0,122,255,.55) !important;
+  box-shadow: 0 0 0 3px rgba(0,122,255,.12) !important;
+  outline: none !important;
+}
+html.dark input, html.dark select, html.dark textarea { background:#1C1C1E; }
+
+/* Consistent press feedback. */
+main button:active, main a:active { transform: scale(.985); }
+.swipe-action:active, .loan-icon-action:active, .loan-text-action:active { transform: scale(.96) !important; }
+
+/* Avoid changing text hierarchy inside icon-only controls. */
+.icon-select select, .search-clear, .loan-icon-action { font-size: 0 !important; }
+
+@media (max-width: 767px) {
+  main h1 { font-size: 26px !important; line-height: 32px !important; }
+  main .rounded-2xl, main .rounded-3xl { border-radius: 15px !important; }
+}
