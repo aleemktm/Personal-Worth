@@ -20,8 +20,7 @@
       h("div", { className: "flex gap-2" },
         h("div", { className: `flex-1 flex items-center gap-2 px-3 rounded-xl border ${darkMode ? "bg-zinc-950 border-zinc-800" : "bg-white border-zinc-200"}` },
           h(Icons.IconSearch, { className: "w-3.5 h-3.5 text-zinc-400 shrink-0" }),
-          h("input", { type: "search", placeholder: "Search title or category…", value: ledgerSearch, onChange: e => setLedgerSearch(e.target.value), className: "w-full py-2 text-[16px] bg-transparent outline-none", "aria-label": "Search transactions" }),
-          ledgerSearch && h("button", { type: "button", className: "search-clear", onClick: () => setLedgerSearch(""), "aria-label": "Clear search", title: "Clear search" }, h(Icons.IconClose, { className: "w-3.5 h-3.5" }))
+          h("input", { type: "text", placeholder: "Search title or category…", value: ledgerSearch, onChange: e => setLedgerSearch(e.target.value), className: "w-full py-2 text-[16px] bg-transparent outline-none" })
         ),
         h("label", { className: `icon-select ${darkMode ? "icon-select-dark" : ""}`, title: "Filter transactions", "aria-label": "Filter transactions" },
           h(Icons.IconFilter, { className: "w-4 h-4" }),
