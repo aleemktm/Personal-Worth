@@ -1809,8 +1809,10 @@ const renderTxRow = tx => {
   }, React.createElement("div", null, React.createElement("div", {
     className: "flex items-center gap-2"
   }, React.createElement("span", {
-    className: `px-2 py-0.5 rounded text-[9px] font-bold uppercase ${tx.type === "income" ? "bg-emerald-500/10 text-emerald-500" : tx.type === "expense" ? "bg-rose-500/10 text-rose-500" : "bg-blue-500/10 text-blue-500"}`
-  }, tx.category), React.createElement("span", { className: "text-[10px] text-zinc-400" }, dateFmt(tx.date))),
+    className: `tx-category-icon ${tx.type === "income" ? "tx-category-income" : tx.type === "expense" ? "tx-category-expense" : "tx-category-transfer"}`,
+    title: tx.category,
+    "aria-label": tx.category
+  }, React.createElement(window.Icons.getCategoryIcon(tx.category), { className: "w-3.5 h-3.5" })), React.createElement("span", { className: `tx-category-label ${tx.type === "income" ? "tx-category-income-text" : tx.type === "expense" ? "tx-category-expense-text" : "tx-category-transfer-text"}` }, tx.category), React.createElement("span", { className: "text-[10px] text-zinc-400" }, dateFmt(tx.date))),
   React.createElement("p", { className: "font-bold mt-1 text-sm" }, tx.title)),
   React.createElement("div", { className: "flex items-center space-x-2" },
     React.createElement("span", { className: `font-bold text-sm ${tx.type === "income" ? "text-emerald-500" : tx.type === "expense" ? "text-rose-500" : "text-blue-500"}` },

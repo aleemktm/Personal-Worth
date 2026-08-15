@@ -46,5 +46,30 @@
   var IconHistory = ({ className }) => /* @__PURE__ */ React.createElement("svg", { className, ...iconBase }, /* @__PURE__ */ React.createElement("path", { d: "M3 12a9 9 0 1 0 3-6.7" }), /* @__PURE__ */ React.createElement("path", { d: "M3 4v5h5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 7v5l3 2" }));
   var IconCalendar = ({ className }) => /* @__PURE__ */ React.createElement("svg", { className, ...iconBase }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "5", width: "18", height: "16", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M16 3v4M8 3v4M3 10h18" }), /* @__PURE__ */ React.createElement("path", { d: "m9 15 2 2 4-4" }));
 
-  window.Icons = { IconOverview,IconLedger,IconAccounts,IconVault,IconLoan,IconAnalytics,IconUndo,IconRedo,IconDownload,IconUpload,IconSun,IconMoon,IconTrash,IconPlus,IconEdit,IconSearch,IconCSV,IconTransfer,IconFilter,IconSort,IconChevron,IconClose,IconRates,IconWallet,IconInflow,IconSync,IconMore,IconMenu,IconSettings,IconTune,IconTag,IconTarget,IconCalendar,IconRepayment,IconAddMore,IconHistory };
+
+  // Category icons — lightweight SF Symbols-inspired line icons for transaction rows.
+  var IconBriefcase = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("rect", { x: "4", y: "7", width: "16", height: "12", rx: "2" }), React.createElement("path", { d: "M9 7V5h6v2M4 11h16" }));
+  var IconSparkles = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("path", { d: "m12 3 1.2 4.8L18 9l-4.8 1.2L12 15l-1.2-4.8L6 9l4.8-1.2L12 3Z" }), React.createElement("path", { d: "m19 14 .7 2.3L22 17l-2.3.7L19 20l-.7-2.3L16 17l2.3-.7L19 14Z" }));
+  var IconGift = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("rect", { x: "4", y: "9", width: "16", height: "11", rx: "2" }), React.createElement("path", { d: "M3 9h18M12 9v11M12 9H8.5a2.5 2.5 0 1 1 0-5c2 0 3.5 5 3.5 5Zm0 0h3.5a2.5 2.5 0 1 0 0-5c-2 0-3.5 5-3.5 5Z" }));
+  var IconCart = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("path", { d: "M4 5h2l2 10h9l2-7H7" }), React.createElement("circle", { cx: "10", cy: "19", r: "1.5" }), React.createElement("circle", { cx: "17", cy: "19", r: "1.5" }));
+  var IconHome = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("path", { d: "m3 11 9-7 9 7" }), React.createElement("path", { d: "M5 10v10h14V10M9 20v-6h6v6" }));
+  var IconUtilities = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("path", { d: "M14 3 6 13h6l-2 8 8-10h-6l2-8Z" }));
+  var IconCar = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("path", { d: "M5 16v-4l2-5h10l2 5v4" }), React.createElement("path", { d: "M5 12h14M7 16h.01M17 16h.01" }), React.createElement("path", { d: "M6 18v-2M18 18v-2" }));
+  var IconForkKnife = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("path", { d: "M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M16 3v18M16 3c3 2 3 5 0 7" }));
+  var IconPeople = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("circle", { cx: "9", cy: "8", r: "3" }), React.createElement("path", { d: "M3.5 20a5.5 5.5 0 0 1 11 0M16 5a3 3 0 0 1 0 6M16 14a5 5 0 0 1 4.5 6" }));
+  var IconEllipsisCircle = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("circle", { cx: "12", cy: "12", r: "9" }), React.createElement("circle", { cx: "8", cy: "12", r: "1", fill: "currentColor", stroke: "none" }), React.createElement("circle", { cx: "12", cy: "12", r: "1", fill: "currentColor", stroke: "none" }), React.createElement("circle", { cx: "16", cy: "12", r: "1", fill: "currentColor", stroke: "none" }));
+  var IconArrowDownCircle = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("circle", { cx: "12", cy: "12", r: "9" }), React.createElement("path", { d: "M12 7v9M8.5 12.5 12 16l3.5-3.5" }));
+  var IconArrowUpCircle = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("circle", { cx: "12", cy: "12", r: "9" }), React.createElement("path", { d: "M12 17V8M8.5 11.5 12 8l3.5 3.5" }));
+  var IconCategoryOther = ({ className }) => React.createElement("svg", { className, ...iconBase }, React.createElement("circle", { cx: "12", cy: "12", r: "9" }), React.createElement("path", { d: "M8 12h.01M12 12h.01M16 12h.01" }));
+  var categoryIconMap = {
+    salary: IconBriefcase, payroll: IconBriefcase, freelance: IconSparkles, gift: IconGift,
+    groceries: IconCart, family: IconPeople, rent: IconHome, utilities: IconUtilities,
+    transport: IconCar, dining: IconForkKnife, shopping: IconCart, transfer: IconTransfer,
+    loan: IconLoan, "loan repayment": IconRepayment, "balance adjustment": IconTune
+  };
+  var getCategoryIcon = (category) => {
+    var key = String(category || "other").trim().toLowerCase();
+    return categoryIconMap[key] || IconCategoryOther;
+  };
+  window.Icons = { IconOverview,IconLedger,IconAccounts,IconVault,IconLoan,IconAnalytics,IconUndo,IconRedo,IconDownload,IconUpload,IconSun,IconMoon,IconTrash,IconPlus,IconEdit,IconSearch,IconCSV,IconTransfer,IconFilter,IconSort,IconChevron,IconClose,IconRates,IconWallet,IconInflow,IconSync,IconMore,IconMenu,IconSettings,IconTune,IconTag,IconTarget,IconCalendar,IconRepayment,IconAddMore,IconHistory,IconBriefcase,IconSparkles,IconGift,IconCart,IconHome,IconUtilities,IconCar,IconForkKnife,IconPeople,IconEllipsisCircle,IconArrowDownCircle,IconArrowUpCircle,IconCategoryOther,getCategoryIcon };
 })();
