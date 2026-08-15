@@ -44,7 +44,7 @@
     className: "text-xs text-zinc-400"
   }, "Are you sure you want to delete ", /* @__PURE__ */React.createElement("strong", {
     className: "text-zinc-200"
-  }, '"', deleteTarget.name, '"'), "? You can use Undo right after deletion."), deleteTarget.extra && /* @__PURE__ */React.createElement("p", {
+  }, '"', deleteTarget.name, '"'), "? This action cannot be undone."), deleteTarget.extra && /* @__PURE__ */React.createElement("p", {
     className: "text-xs text-rose-400 font-semibold"
   }, deleteTarget.extra), /* @__PURE__ */React.createElement("div", {
     className: "pt-2 flex justify-end space-x-2"

@@ -520,172 +520,27 @@ html.dark .swipe-action-delete {
 .loan-icon-action svg { width: 18px; height: 18px; stroke-width: 2.1; }
 .loan-icon-action:hover { filter: brightness(.98) saturate(1.06); transform: translateY(-1px); box-shadow: 0 7px 16px rgba(0,0,0,.09); }
 .loan-icon-action:active { transform: scale(.94); box-shadow: 0 2px 7px rgba(0,0,0,.07); }
-.loan-icon-action-history { background: rgba(113,116,125,.10) !important; color: #70747d !important; border-color: rgba(113,116,125,.18); box-shadow: 0 3px 10px rgba(0,0,0,.045); }
+.loan-icon-action-history { background: linear-gradient(145deg,#9a9ca3,#73767f) !important; color: #fff !important; border-color: rgba(255,255,255,.24); }
 html.dark .loan-text-action-repay { background: rgba(16,185,129,.105) !important; color: #79bfa7 !important; border-color: rgba(16,185,129,.21); }
 html.dark .loan-text-action-add { background: rgba(59,130,246,.105) !important; color: #91b0da !important; border-color: rgba(59,130,246,.21); }
 html.dark .loan-icon-action { box-shadow: 0 5px 16px rgba(0,0,0,.24); }
-html.dark .loan-icon-action-history { background: rgba(161,165,175,.12) !important; color: #b8bcc5 !important; border-color: rgba(161,165,175,.20); }
+html.dark .loan-icon-action-history { background: linear-gradient(145deg,#666a73,#4c4f57) !important; }
 
-/* AleemFin iOS UX system — Phase 1–4 (bottom sheets intentionally excluded). */
+/* iOS-style polish: safe, additive layer. */
 :root {
-  --af-radius-card: 18px;
-  --af-radius-control: 13px;
   --af-touch: 44px;
-  --af-surface: rgba(255,255,255,.82);
-  --af-surface-strong: rgba(255,255,255,.94);
-  --af-border: rgba(24,24,27,.09);
-  --af-separator: rgba(24,24,27,.08);
-  --af-text-secondary: #71717a;
-  --af-shadow: 0 8px 28px rgba(15,23,42,.055);
+  --af-control-radius: 13px;
 }
-html.dark {
-  --af-surface: rgba(24,24,27,.78);
-  --af-surface-strong: rgba(39,39,42,.94);
-  --af-border: rgba(255,255,255,.09);
-  --af-separator: rgba(255,255,255,.08);
-  --af-text-secondary: #a1a1aa;
-  --af-shadow: 0 10px 32px rgba(0,0,0,.20);
-}
-
-/* Native-like hierarchy and spacing. */
-main h2.text-sm.font-bold.uppercase {
-  font-size: 1.05rem !important;
-  line-height: 1.3 !important;
-  letter-spacing: -.012em !important;
-  text-transform: none !important;
-}
-main .rounded-2xl.border,
-main .rounded-3xl.border {
-  border-color: var(--af-border);
-}
-main button, main a, header button, nav button, label.icon-select {
-  min-height: var(--af-touch);
-}
-main button:not(.swipe-action), header button, nav button, .icon-select {
-  -webkit-tap-highlight-color: transparent;
-}
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 2px solid rgba(16,185,129,.72);
-  outline-offset: 2px;
-}
-
-/* Soft native surface treatment. */
-.swipe-content-card {
-  box-shadow: var(--af-shadow);
-  transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease, border-color .22s ease;
-}
-.swipe-content-card:active { transform: scale(.995); }
-
-/* Search field with native clear affordance. */
-.search-clear {
-  width: 30px !important;
-  min-width: 30px !important;
-  min-height: 30px !important;
-  height: 30px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #71717a;
-  background: rgba(113,113,122,.10);
-  flex: 0 0 30px;
-}
-html.dark .search-clear { color:#d4d4d8; background:rgba(161,161,170,.13); }
-.search-clear:active { transform: scale(.9); }
-
-/* Swipe actions stay truly hidden until revealed; springier native motion. */
-.swipe-content { transition: transform .42s cubic-bezier(.2,.9,.25,1.12); }
+button, a, select, input[type="checkbox"], input[type="radio"] { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid rgba(16,185,129,.72); outline-offset: 2px; }
 .swipe-actions { transition: opacity .18s ease, transform .38s cubic-bezier(.2,.9,.25,1.12), visibility 0s linear .38s; }
 .swipe-actions.is-open { transition-delay: 0s; }
-.swipe-action { min-height: 44px; }
-
-/* Loan actions use the same muted system as the rest of the app. */
-.loan-text-action, .loan-icon-action { min-height: 44px; }
-.loan-icon-action-history { background: rgba(113,116,125,.08) !important; color:#747882 !important; border-color:rgba(113,116,125,.14); }
-html.dark .loan-icon-action-history { background:rgba(161,165,175,.10) !important; color:#b6bac2 !important; border-color:rgba(161,165,175,.15); }
-
-/* Settings remains a drawer, but its controls follow the same touch rhythm. */
-.settings-drawer input, .settings-drawer select, .settings-drawer button { min-height:44px; }
-
-/* Lightweight toast for reversible destructive actions. */
-.undo-toast {
-  position: fixed;
-  z-index: 80;
-  left: 50%;
-  bottom: calc(88px + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: .85rem;
-  min-height: 44px;
-  padding: .55rem .65rem .55rem .9rem;
-  border-radius: 16px;
-  background: rgba(39,39,42,.94);
-  color: #fafafa;
-  box-shadow: 0 14px 34px rgba(0,0,0,.22);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
-  animation: af-toast-in .26s cubic-bezier(.2,.9,.25,1.12);
-  font-size: 12px;
-  font-weight: 700;
-}
-.undo-toast-action {
-  min-height: 32px !important;
-  padding: .25rem .7rem;
-  border: 0;
-  border-radius: 10px;
-  background: rgba(16,185,129,.18);
-  color: #6ee7b7;
-  font-weight: 800;
-}
-@keyframes af-toast-in { from { opacity:0; transform:translate(-50%,12px) scale(.96); } to { opacity:1; transform:translate(-50%,0) scale(1); } }
-
-/* Native-feeling controls and form fields. */
-input, select, textarea { accent-color: #10b981; }
-input[type="number"], input[type="date"], input[type="text"], input[type="search"], textarea, select {
-  border-radius: var(--af-radius-control);
-}
-input::placeholder, textarea::placeholder { color: #a1a1aa; }
-
-/* Empty states are quieter and more useful. */
-main .text-center.rounded-3xl.border p.text-xs.font-medium {
-  font-size: 13px !important;
-  line-height: 1.55;
-}
-
-/* Reduced motion is respected throughout the interaction system. */
+.swipe-content { transition: transform .42s cubic-bezier(.2,.9,.25,1.12); }
+.swipe-action { min-width: 44px; min-height: 44px; }
+input, select, textarea { border-radius: var(--af-control-radius); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; }
 }
-
-/* Larger text / dynamic type support without breaking compact controls. */
-@media (min-resolution: 2dppx) {
-  .swipe-action svg { shape-rendering: geometricPrecision; }
-}
 @media (max-width: 767px) {
   main { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
-  .undo-toast { max-width: calc(100vw - 32px); }
 }
-
-/* Pull-to-refresh affordance (mobile). */
-.pull-refresh-indicator {
-  position: sticky;
-  top: 4px;
-  z-index: 10;
-  width: fit-content;
-  margin: -4px auto .25rem;
-  padding: .45rem .75rem;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  gap: .45rem;
-  font-size: 11px;
-  font-weight: 800;
-  color: #059669;
-  background: rgba(16,185,129,.10);
-  border: 1px solid rgba(16,185,129,.14);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-}
-html.dark .pull-refresh-indicator { color:#6ee7b7; background:rgba(16,185,129,.12); border-color:rgba(16,185,129,.18); }
-@media (min-width:768px) { .pull-refresh-indicator { display:none; } }

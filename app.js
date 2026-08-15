@@ -9,28 +9,27 @@ var {
   useMemo,
   useRef
 } = React;
-var hapticFeedback = (duration = 10) => {
+var hapticFeedback = function(duration) {
   try {
-    if (window.webkit?.messageHandlers?.hapticFeedback) {
-      window.webkit.messageHandlers.hapticFeedback.postMessage({ duration });
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.hapticFeedback) {
+      window.webkit.messageHandlers.hapticFeedback.postMessage({ duration: duration || 10 });
       return;
     }
-    if (navigator && typeof navigator.vibrate === "function") navigator.vibrate(duration);
+    if (navigator && typeof navigator.vibrate === "function") navigator.vibrate(duration || 10);
   } catch (_) {}
 };
 if (!window.__aleemFinHapticsInstalled) {
   window.__aleemFinHapticsInstalled = true;
-  document.addEventListener("click", e => {
-    const target = e.target && e.target.closest ? e.target.closest("button, a, select, [role=button], input[type=checkbox], input[type=radio]") : null;
+  document.addEventListener("click", function(e) {
+    var target = e.target && e.target.closest ? e.target.closest("button, a, [role=button], input[type=checkbox], input[type=radio]") : null;
     if (target && !target.disabled && target.getAttribute("aria-disabled") !== "true") hapticFeedback(8);
   }, true);
-  document.addEventListener("change", e => {
-    const target = e.target;
-    if (target && (target.matches?.("select, input[type=checkbox], input[type=radio]"))) hapticFeedback(7);
+  document.addEventListener("change", function(e) {
+    var target = e.target;
+    if (target && target.matches && target.matches("select, input[type=checkbox], input[type=radio]")) hapticFeedback(7);
   }, true);
 }
 var SwipeRow = ({ children, onEdit, onDelete, editLabel = "Edit", deleteLabel = "Delete" }) => {
-  const rowId = useRef(`swipe-${Math.random().toString(36).slice(2)}`);
   const [open, setOpen] = useState(false);
   const startX = useRef(0);
   const startY = useRef(0);
@@ -45,11 +44,6 @@ var SwipeRow = ({ children, onEdit, onDelete, editLabel = "Edit", deleteLabel = 
   const setOffset = value => {
     if (contentRef.current) contentRef.current.style.transform = `translate3d(${value}px,0,0)`;
   };
-  useEffect(() => {
-    const closeOthers = e => { if (e.detail !== rowId.current) close(); };
-    window.addEventListener("aleemfin:close-swipe", closeOthers);
-    return () => window.removeEventListener("aleemfin:close-swipe", closeOthers);
-  }, []);
   const onPointerDown = e => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     startX.current = e.clientX;
@@ -80,7 +74,6 @@ var SwipeRow = ({ children, onEdit, onDelete, editLabel = "Edit", deleteLabel = 
     const dx = e.clientX - startX.current;
     if (dx < (open ? -35 : -55)) {
       hapticFeedback(16);
-      window.dispatchEvent(new CustomEvent("aleemfin:close-swipe", { detail: rowId.current }));
       setOpen(true);
       setOffset(-ACTION_WIDTH);
     } else if (open && dx > 35) {
@@ -492,10 +485,6 @@ useEffect(() => {
 }, [darkMode]);
 const [history, setHistory] = useState([]);
 const [redoStack, setRedoStack] = useState([]);
-const [undoToast, setUndoToast] = useState(false);
-const [refreshing, setRefreshing] = useState(false);
-const pullStartY = useRef(0);
-const pullDistance = useRef(0);
 const saveStateToHistory = () => {
   setHistory(prev => [...prev.slice(-15), {
     accounts,
@@ -507,7 +496,6 @@ const saveStateToHistory = () => {
 };
 const handleUndo = () => {
   if (history.length === 0) return;
-  setUndoToast(false);
   const previousState = history[history.length - 1];
   setRedoStack(prev => [{
     accounts,
@@ -524,7 +512,6 @@ const handleUndo = () => {
 };
 const handleRedo = () => {
   if (redoStack.length === 0) return;
-  setUndoToast(false);
   const nextState = redoStack[0];
   setHistory(prev => [...prev, {
     accounts,
@@ -1435,8 +1422,6 @@ const confirmDelete = () => {
   }
   persistAllData(updatedAccs, updatedAsts, updatedLoans, updatedTxns);
   setDeleteTarget(null);
-  setUndoToast(true);
-  window.setTimeout(() => setUndoToast(false), 5000);
 };
 const askDeleteAccount = acc => {
   const linkedCount = transactions.filter(t => t.accountId === acc.id || t.toAccountId === acc.id).length;
@@ -2112,49 +2097,7 @@ useEffect(() => {
   };
 }, [activeTab, darkMode]);
 
-    useEffect(() => {
-      const root = document.getElementById("root");
-      if (!root) return;
-      const enhanceInputs = () => {
-        root.querySelectorAll('input[type="number"]').forEach(input => {
-          input.setAttribute("inputmode", "decimal");
-          input.setAttribute("enterkeyhint", "done");
-        });
-        root.querySelectorAll('input[type="text"], input[type="search"], textarea').forEach(input => {
-          if (!input.getAttribute("enterkeyhint")) input.setAttribute("enterkeyhint", "done");
-        });
-      };
-      enhanceInputs();
-      const observer = new MutationObserver(enhanceInputs);
-      observer.observe(root, { childList: true, subtree: true });
-      return () => observer.disconnect();
-    }, [activeTab, modalType]);
-
-    const handlePullStart = e => {
-      if (window.innerWidth > 767 || refreshing || e.target?.closest?.(".swipe-row")) return;
-      const scroller = document.scrollingElement || document.documentElement;
-      if (scroller.scrollTop <= 0) pullStartY.current = e.touches?.[0]?.clientY || 0;
-    };
-    const handlePullMove = e => {
-      if (!pullStartY.current || refreshing || e.target?.closest?.(".swipe-row")) return;
-      const dy = (e.touches?.[0]?.clientY || 0) - pullStartY.current;
-      if (dy > 0) pullDistance.current = Math.min(72, dy * .45);
-      if (dy > 10 && e.cancelable) e.preventDefault();
-    };
-    const handlePullEnd = async () => {
-      if (!pullStartY.current) return;
-      const shouldRefresh = pullDistance.current >= 52;
-      pullStartY.current = 0;
-      pullDistance.current = 0;
-      if (!shouldRefresh || refreshing) return;
-      setRefreshing(true);
-      hapticFeedback(14);
-      try { await refreshLiveRates(); } catch (_) {}
-      setRefreshing(false);
-      hapticFeedback(8);
-    };
-
-    const tabProps = { undoToast, setUndoToast, DEFAULT_SETTINGS, DashCard, MORE_NAV_ITEMS, accent, accounts, activeTab, addCategory, addMoreAccountId, addMoreAmount, addMoreDate, advanceRecurringDate, applyLiveGoldRate, askDeleteAccount, assets, avgMonthlyNet, bestMonth, biggestExpenseThisMonth, budgetForm, budgets, cardCls, categoryBreakdown, categoryManagerOpen, categoryName, categoryType, closeModal, confirmDangerAction, confirmDelete, convertFromAED, convertTxToAED, currency, currentMonthLabel, dangerAction, dangerPhrase, darkMode, dateFmt, deleteBudget, deleteGoal, deleteRecurringItem, deleteTarget, describeAccountMovement, editingId, emergencyRunwayMonths, exchangeRates, expandedLoanHistory, exportBackup, exportCSV, filteredTransactions, fmt, formInput, getLastInflow, getLastOutflow, goalForm, goals, goldChangeAED, goldChangePct, goldSyncMsg, greeting, handleAddMoreSubmit, handleFormSubmit, handleRepaymentSubmit, importBackup, importBankTransactionFromSMS, parseBankTransactionSMS, inputCls, insightTrendPeriod, insightTrendStyle, ledgerFilter, ledgerSearch, ledgerSort, liveGoldAEDPerGram, loanAddMoreTarget, loanSort, loans, maxMonthlyVal, modalType, momDeltaPct, monthlyExpenseAED, monthlyHistory, monthlyIncomeAED, monthlySavingsAED, monthlyTransactions, netWorthTotal, numFmt, openAddModal, openBudgetEditor, openDangerAction, openEditModal, openGoalEditor, openRatesModal, openRecurringEditor, planningEditor, rateForm, rateSyncMsg, recordRecurringOccurrence, recurringEditor, recurringForm, recurringItems, refreshLiveRates, removeCategory, renderTxRow, repayAccountId, repayAmount, repayDate, repaymentModalLoan, runwayStatus, saveBudget, saveGoal, saveRates, saveRecurringItem, savingsRate, setActiveTab, smsOpen, setSmsOpen, smsText, setSmsText, smsParsed, setSmsParsed, setAddMoreAccountId, setAddMoreAmount, setAddMoreDate, setBudgetForm, setCategoryManagerOpen, setCategoryName, setCategoryType, setCurrency, setDangerAction, setDangerPhrase, setDeleteTarget, setExpandedLoanHistory, setFormInput, setGoalForm, setInsightTrendPeriod, setInsightTrendStyle, setLedgerFilter, setLedgerSearch, setLedgerSort, setLoanAddMoreTarget, setLoanSort, setMoreSheetOpen, setPlanningEditor, setRateForm, setRatesModalOpen, setRecurringEditor, setRecurringForm, setRepayAccountId, setRepayAmount, setRepayDate, setRepaymentModalLoan, settings, sortedLoans, subCardCls, syncLiveExchangeRates, syncLiveGoldRate, syncingGold, syncingRates, todayISO, todayStr, totalLiquidAED, totalLoansBorrowedAED, totalLoansLentAED, totalPhysicalAED, transactions, updateRecurringItem, updateSettings, yearlyHistory };
+    const tabProps = { DEFAULT_SETTINGS, DashCard, MORE_NAV_ITEMS, accent, accounts, activeTab, addCategory, addMoreAccountId, addMoreAmount, addMoreDate, advanceRecurringDate, applyLiveGoldRate, askDeleteAccount, assets, avgMonthlyNet, bestMonth, biggestExpenseThisMonth, budgetForm, budgets, cardCls, categoryBreakdown, categoryManagerOpen, categoryName, categoryType, closeModal, confirmDangerAction, confirmDelete, convertFromAED, convertTxToAED, currency, currentMonthLabel, dangerAction, dangerPhrase, darkMode, dateFmt, deleteBudget, deleteGoal, deleteRecurringItem, deleteTarget, describeAccountMovement, editingId, emergencyRunwayMonths, exchangeRates, expandedLoanHistory, exportBackup, exportCSV, filteredTransactions, fmt, formInput, getLastInflow, getLastOutflow, goalForm, goals, goldChangeAED, goldChangePct, goldSyncMsg, greeting, handleAddMoreSubmit, handleFormSubmit, handleRepaymentSubmit, importBackup, importBankTransactionFromSMS, parseBankTransactionSMS, inputCls, insightTrendPeriod, insightTrendStyle, ledgerFilter, ledgerSearch, ledgerSort, liveGoldAEDPerGram, loanAddMoreTarget, loanSort, loans, maxMonthlyVal, modalType, momDeltaPct, monthlyExpenseAED, monthlyHistory, monthlyIncomeAED, monthlySavingsAED, monthlyTransactions, netWorthTotal, numFmt, openAddModal, openBudgetEditor, openDangerAction, openEditModal, openGoalEditor, openRatesModal, openRecurringEditor, planningEditor, rateForm, rateSyncMsg, recordRecurringOccurrence, recurringEditor, recurringForm, recurringItems, refreshLiveRates, removeCategory, renderTxRow, repayAccountId, repayAmount, repayDate, repaymentModalLoan, runwayStatus, saveBudget, saveGoal, saveRates, saveRecurringItem, savingsRate, setActiveTab, smsOpen, setSmsOpen, smsText, setSmsText, smsParsed, setSmsParsed, setAddMoreAccountId, setAddMoreAmount, setAddMoreDate, setBudgetForm, setCategoryManagerOpen, setCategoryName, setCategoryType, setCurrency, setDangerAction, setDangerPhrase, setDeleteTarget, setExpandedLoanHistory, setFormInput, setGoalForm, setInsightTrendPeriod, setInsightTrendStyle, setLedgerFilter, setLedgerSearch, setLedgerSort, setLoanAddMoreTarget, setLoanSort, setMoreSheetOpen, setPlanningEditor, setRateForm, setRatesModalOpen, setRecurringEditor, setRecurringForm, setRepayAccountId, setRepayAmount, setRepayDate, setRepaymentModalLoan, settings, sortedLoans, subCardCls, syncLiveExchangeRates, syncLiveGoldRate, syncingGold, syncingRates, todayISO, todayStr, totalLiquidAED, totalLoansBorrowedAED, totalLoansLentAED, totalPhysicalAED, transactions, updateRecurringItem, updateSettings, yearlyHistory };
 
     return (
       /* @__PURE__ */React.createElement("div", {
@@ -2195,7 +2138,6 @@ useEffect(() => {
       return /* @__PURE__ */React.createElement("button", {
         key: tab.id,
         onClick: () => setActiveTab(tab.id),
-        "aria-current": isActive ? "page" : undefined,
         className: `flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${isActive ? `bg-zinc-800 ${accent.text400} shadow-sm` : "text-zinc-400 hover:text-white"}`
       }, /* @__PURE__ */React.createElement(Icon, {
         className: "w-3.5 h-3.5"
@@ -2239,15 +2181,11 @@ useEffect(() => {
       className: "w-4 h-4"
     }) : /* @__PURE__ */React.createElement(Icons.IconMoon, {
       className: "w-4 h-4"
-    }))))), undoToast && /* @__PURE__ */React.createElement("div", { className: "undo-toast", role: "status", "aria-live": "polite" },
-      /* @__PURE__ */React.createElement("span", null, "Deleted"),
-      /* @__PURE__ */React.createElement("button", { type: "button", onClick: handleUndo, className: "undo-toast-action" }, "Undo")
-    ), storageError && /* @__PURE__ */React.createElement("div", {
+    }))))), storageError && /* @__PURE__ */React.createElement("div", {
       className: "bg-rose-600 text-white text-xs font-semibold text-center py-2 px-4 safe-x"
     }, "Couldn't save your last change to this device's storage (it may be full or in private-browsing mode). Please export a backup soon so nothing is lost."), /* @__PURE__ */React.createElement("main", {
-      className: "max-w-5xl mx-auto px-4 py-5 sm:py-6 space-y-5 sm:space-y-6 flex-1 w-full safe-x app-main",
-      onTouchStart: handlePullStart, onTouchMove: handlePullMove, onTouchEnd: handlePullEnd, onTouchCancel: handlePullEnd
-    }, refreshing && /* @__PURE__ */React.createElement("div", { className: "pull-refresh-indicator", role: "status", "aria-live": "polite" }, /* @__PURE__ */React.createElement(Icons.IconSync, { className: "w-4 h-4 animate-spin" }), "Refreshing…"), activeTab === "overview" && Tabs.Overview(tabProps), activeTab === "transactions" && Tabs.Ledger(tabProps), activeTab === "accounts" && Tabs.Accounts(tabProps), activeTab === "vault" && Tabs.Vault(tabProps), activeTab === "loans" && Tabs.Loans(tabProps), activeTab === "analytics" && Tabs.Analytics(tabProps)), activeTab === "analytics" && Tabs.AnalyticsSummary(tabProps), activeTab === "planning" && Tabs.Planning(tabProps), activeTab === "recurring" && Tabs.Recurring(tabProps), activeTab === "settings" && Tabs.Settings(tabProps), /* @__PURE__ */React.createElement("nav", {
+      className: "max-w-5xl mx-auto px-4 py-5 sm:py-6 space-y-5 sm:space-y-6 flex-1 w-full safe-x"
+    }, activeTab === "overview" && Tabs.Overview(tabProps), activeTab === "transactions" && Tabs.Ledger(tabProps), activeTab === "accounts" && Tabs.Accounts(tabProps), activeTab === "vault" && Tabs.Vault(tabProps), activeTab === "loans" && Tabs.Loans(tabProps), activeTab === "analytics" && Tabs.Analytics(tabProps)), activeTab === "analytics" && Tabs.AnalyticsSummary(tabProps), activeTab === "planning" && Tabs.Planning(tabProps), activeTab === "recurring" && Tabs.Recurring(tabProps), activeTab === "settings" && Tabs.Settings(tabProps), /* @__PURE__ */React.createElement("nav", {
       className: "md:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t safe-bottom bg-zinc-900/95 border-zinc-800",
       style: {
         position: "fixed"
@@ -2267,7 +2205,6 @@ useEffect(() => {
           setMoreSheetOpen(false);
         },
         "data-mobile-nav-tab": tab.id,
-        "aria-current": isActive ? "page" : undefined,
         className: `mobile-nav-tab flex flex-col items-center justify-center rounded-2xl transition-all active:scale-95 ${isActive ? `${accent.text400} font-bold` : "text-zinc-400 hover:text-zinc-200"}`
       }, /* @__PURE__ */React.createElement("div", {
         className: `flex items-center justify-center w-9 h-9 rounded-xl mb-1 ${isActive ? accent.activeBg : ""}`
